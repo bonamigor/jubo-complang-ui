@@ -12,11 +12,11 @@ import UnidadeMedidaService from "./unidade-medida"
 
 const API_ENVS = {
   local: 'http://localhost:3001',
-  production: 'https://jubo-api-production.up.railway.app'
+  production: 'https://jubo-complang-api-production.up.railway.app'
 }
 
 const httpClient = axios.create({
-  baseURL: API_ENVS.local
+  baseURL: API_ENVS.production
 })
 
 httpClient.interceptors.request.use(config => {
