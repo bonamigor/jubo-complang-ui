@@ -66,6 +66,11 @@ const Navbar: NextPage<NavbarProps> = ({ isUserLoggedIn }) => {
                       <DropdownMenuItem isActive={isActive({route, item: 'estante'})}>ESTANTE</DropdownMenuItem>
                     </Link>
                   </Dropdown.Item>
+                  <Dropdown.Item>
+                    <Link href="/admin/cadastro/copia-estante" passHref>
+                      <DropdownMenuItem isActive={isActive({route, item: 'copia'})}>COPIAR ESTANTE</DropdownMenuItem>
+                    </Link>
+                  </Dropdown.Item>                  
                 </Dropdown.Menu>
               </Dropdown>
               <Dropdown>

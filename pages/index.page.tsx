@@ -85,8 +85,8 @@ const Home: NextPage = () => {
             </div>
             <footer>
               <p>Dúvidas?</p>
-              <p>(62) 99155-4437 / (62) 3091-5471</p>
-              <p><a href="mailto:mendesalimentos@hotmail.com">mendesalimentos@hotmail.com</a></p>
+              <p>(62) 9303-2381</p>
+              <p><a href="mailto:philipeestevao@outlook.com.br">philipeestevao@outlook.com.br</a></p>
             </footer>
           </LeftContent>
           <RightContent>

@@ -163,7 +163,25 @@ const EstanteService = (httpClient: AxiosInstance) => ({
       data: response.data,
       estanteErrors
     }
-  }
+  },
+
+  copiarProdutosEntreEstantes: async (dados: { estanteOrigemId: number; estanteDestinoId: number }) => {
+    const response = await httpClient.post(`/api/estantes/copiar`, { dados })
+
+    let estanteErrors = null
+
+    if (!response.data) {
+      estanteErrors = {
+        status: response.request.status,
+        statusText: response.request.statusText
+      }
+    }
+
+    return {
+      data: response.data,
+      estanteErrors
+    }
+  },
 })
 
 export default EstanteService

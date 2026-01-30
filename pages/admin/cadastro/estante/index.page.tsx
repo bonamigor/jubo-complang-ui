@@ -17,7 +17,7 @@ import { clienteService, estanteService } from '../../../../services/index'
 import { Cliente } from "../cliente/index.page"
 import { Container, Content, FormButton, FormItself, FormSubmitButton, InputFilter, TableContainer } from "./estante"
 
-interface EstanteProps {
+export interface EstanteProps {
   id: number;
   clienteId: string;
   cliente: string;
