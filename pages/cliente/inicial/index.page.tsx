@@ -54,7 +54,7 @@ const Inicial: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Jubo Notas - Início</title>
+        <title>Coop Pedidos - Início</title>
       </Head>
       <Observacao>
         <h1>OBS.: Faça o seu pedido com no mínimo 5 dias úteis <br />de antecedência da data de entrega desejada.</h1>

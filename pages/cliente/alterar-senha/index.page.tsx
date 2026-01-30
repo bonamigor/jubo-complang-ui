@@ -46,7 +46,7 @@ const AlterarSenha: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Jubo Notas - Alterar Senha</title>
+        <title>Coop Pedidos - Alterar Senha</title>
       </Head>    
       <Container>
         <Content>

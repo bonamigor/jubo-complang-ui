@@ -57,7 +57,7 @@ const Pedidos: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Jubo Notas - Pedidos</title>
+        <title>Coop Pedidos - Pedidos</title>
       </Head>    
       <Container>
         <Content>

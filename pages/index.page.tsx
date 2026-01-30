@@ -65,8 +65,8 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Jubo Notas</title>
-        <meta name="description" content="Jubo Notas p/ Merenda Escolar" />
+        <title>Coop Pedidos</title>
+        <meta name="description" content="Coop Pedidos p/ Merenda Escolar" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HomeStyle>
