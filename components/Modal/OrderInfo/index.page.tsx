@@ -17,6 +17,7 @@ import { PedidosProps } from '../../../services/pedido'
 import DeleteModal from '../Delete/index.page'
 import { CancelSection, ConfirmSection, Container, GeneratePdf, Observacao, OrderFooter, OrderHeader, OrderItems } from './orderInfo'
 import { empresas } from '../../../utils/empresas'
+import { format, isAfter, isToday, isValid, parse, startOfDay } from 'date-fns'
 
 interface ProductsProps {
   estanteId: string;
@@ -89,12 +90,54 @@ const OrderInfo: NextPage<OrderInfoModalProps> = ({ isOpen, onRequestClose, pedi
     fetchValorTotal()
   }
 
-  const confirmOrder = async () => {
-    const dataFormatada = new Date(dataEntrega.split('/').reverse().join('-')).getTime()
-    let observacaoData: any;
-    let observacaoErrors: any;
-
+  function validarDataComFormato(dataString: string, formato: string = 'dd/MM/yyyy') {
     try {
+      const data = parse(dataString, formato, new Date());
+      
+      if (!isValid(data)) {
+        return {
+          valida: false,
+          mensagem: `Data (${data}) inválida. Use o formato: ${formato}`
+        };
+      }
+      
+      const hoje = startOfDay(new Date());
+      
+      if (isAfter(hoje, data) || isToday(data)) {
+        return {
+          valida: false,
+          mensagem: `Data (${format(data, 'dd/MM/yyyy')}) deve ser futura (maior que hoje - ${format(new Date(), 'dd/MM/yyyy')})`
+        };
+      }
+      
+      return {
+        valida: true,
+        mensagem: 'Data válida',
+        data: data
+      };
+      
+    } catch (error) {
+      return {
+        valida: false,
+        mensagem: 'Erro ao processar data'
+      };
+    }
+  }  
+
+  const confirmOrder = async () => {
+    try {
+      const {valida, mensagem} = validarDataComFormato(dataEntrega, 'dd/MM/yyyy')
+
+      if (!valida) {
+        toast.error(mensagem)
+        return false;
+      }    
+      
+      const dataFormatada = new Date(dataEntrega.split('/').reverse().join('-')).getTime()
+      let observacaoData: any;
+      let observacaoErrors: any;
+
+
       const { data: confirmarData, errors: confirmarErrors } = await pedidoService.confirmarPedidoById({ pedidoId: pedido.id, dataEntrega: dataFormatada })
       const { data: empresaData, errors: empresaErrors } = await pedidoService.setarEmpresaAoPedido(pedido.id, empresaSelecionada)
       if (observacaoPedidoInicial !== observacaoPedido) {
