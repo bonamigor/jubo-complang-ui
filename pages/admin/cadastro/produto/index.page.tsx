@@ -5,7 +5,7 @@ import EditImg from '../../../../assets/edit.png'
 import DeleteImg from '../../../../assets/delete.png'
 import ConfirmImg from '../../../../assets/confirm.png'
 import { useState, FormEvent, useEffect } from 'react';
-import { produtoService, unidadeMedidaService } from '../../../../services/index';
+import { produtoService } from '../../../../services/index';
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import DeleteModal from "../../../../components/Modal/Delete/index.page";
@@ -23,12 +23,6 @@ export interface ProdutoProps {
   ativo: number;
 }
 
-export interface UnidadeMedidaProps {
-  id: number;
-  sigla: string;
-  descricao: string;
-}
-
 const CadastroProduto: NextPage = () => {
   const router = useRouter()
   const [isUpdate, setIsUpdate] = useState(false)
@@ -36,7 +30,7 @@ const CadastroProduto: NextPage = () => {
   const [id, setId] = useState(0)
   const [nome, setNome] = useState('')
   const [preco, setPreco] = useState('')
-  const [unidadeMedidaId, setUnidadeMedidaId] = useState('') // Alterado para ID
+  const [unidade, setUnidade] = useState('')
   const [filter, setFilter] = useState('')
   const [filteredprodutos, setFilteredprodutos] = useState<ProdutoProps[]>([])
   const [currentPage, setCurrentPage] = useState(1)
@@ -44,32 +38,16 @@ const CadastroProduto: NextPage = () => {
   const [isValid, setIsValid] = useState(false)
   const [produto, setProduto] = useState<ProdutoProps>()
   const [isUpdateStatusModalOpen, setIsUpdateStatusModalOpen] = useState(false)
-  const [unidadesMedida, setUnidadesMedida] = useState<UnidadeMedidaProps[]>([]) // Estado para unidades
 
   const lastIndex = currentPage * postPerPage;
   const firstIndex = lastIndex - postPerPage;
 
-  const validate = () => nome.length > 0 && preco.length > 0 && unidadeMedidaId.length > 0
+  const validate = () => nome.length > 0 && preco.length > 0 && unidade.length > 0
 
   useEffect(() => {
     const isValid = validate();
     setIsValid(isValid);
-  }, [nome, preco, unidadeMedidaId])
-
-  // Carregar unidades de medida
-  useEffect(() => {
-    const carregarUnidadesMedida = async () => {
-      try {
-        const response = await unidadeMedidaService.listarTodasUnidadesMedida();
-        setUnidadesMedida(response.unidadesMedida || []);
-      } catch (error) {
-        console.error('Erro ao carregar unidades de medida:', error);
-        toast.error('Erro ao carregar unidades de medida');
-      }
-    };
-
-    carregarUnidadesMedida();
-  }, []);
+  }, [nome, preco, unidade])
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
@@ -77,29 +55,28 @@ const CadastroProduto: NextPage = () => {
       const { errors } = await produtoService.cadastrarProduto({
         nome: nome,
         precoCusto: preco.replace(',','.'),
-        unidadeMedidaId: parseInt(unidadeMedidaId) // Alterado para ID
+        unidadeMedida: unidade
       })
       if (!errors) {
         toast.success('Produto cadastrado com sucesso!')
         router.reload()
       }
     } catch (error) {
-      toast.error('Erro ao cadastrar produto.')
+      toast.error('Erro ao cadastra produto.')
       console.error(error)
     }
   }
 
-  const VINTE_E_QUATRO_HORAS = (60 * 1000) * 60 * 24
+  const VINTE_E_QUATRO_HORAS = (60 *  1000) * 60 * 24
 
-  const { data, isLoading, isSuccess, isError } = useQuery('produtos', produtoService.listarTodosOsProdutosParaAdmin, { 
-    staleTime: VINTE_E_QUATRO_HORAS 
-  })
+  const { data, isLoading, isSuccess, isError } = useQuery('produtos', produtoService.listarTodosOsProdutosParaAdmin, { staleTime: VINTE_E_QUATRO_HORAS })
 
   let produtos: any;
   let produtosPaginados: any;
 
   if (data) {
     produtos = data.produtos
+    console.log(data.produtos)
     produtosPaginados = data.produtos.slice(firstIndex, lastIndex);  
   }
 
@@ -114,13 +91,7 @@ const CadastroProduto: NextPage = () => {
     setId(produto.id)
     setNome(produto.nome)
     setPreco(String(produto.preco))
-    
-    // Encontrar a unidade de medida correspondente pela sigla
-    const unidadeCorrespondente = unidadesMedida.find(um => um.sigla === produto.unidade);
-    if (unidadeCorrespondente) {
-      setUnidadeMedidaId(unidadeCorrespondente.id.toString());
-    }
-    
+    setUnidade(produto.unidade)
     setIsUpdate(true)
   }
 
@@ -129,7 +100,7 @@ const CadastroProduto: NextPage = () => {
       const { errors } = await produtoService.atualizarProduto({
         nome: nome,
         precoCusto: String(preco),
-        unidadeMedidaId: parseInt(unidadeMedidaId), // Alterado para ID
+        unidadeMedida: unidade,
         id: id
       })
       if (!errors) {
@@ -137,7 +108,7 @@ const CadastroProduto: NextPage = () => {
         router.reload()
       }
     } catch (error) {
-      toast.error('Erro ao atualizar produto.')
+      toast.error('Erro ao cadastra produto.')
       console.error(error)
     }
   }
@@ -167,70 +138,32 @@ const CadastroProduto: NextPage = () => {
           <h1>Cadastro de Produto</h1>
           <FormItself onSubmit={handleSubmit}>
             <div>
-              <input 
-                type="text" 
-                id="name" 
-                value={nome} 
-                onChange={event => setNome(event.target.value)} 
-                placeholder="Nome" 
-              />
-              <input 
-                type="text" 
-                id="price" 
-                value={preco} 
-                onChange={(event) => setPreco(event.target.value)} 
-                placeholder="Preço" 
-              />
-              <select 
-                name="unidades" 
-                id="unidade" 
-                value={unidadeMedidaId} 
-                onChange={event => setUnidadeMedidaId(event.target.value)}
-                disabled={unidadesMedida.length === 0}
-              >
-                <option value="">Selecione a unidade</option>
-                {unidadesMedida.map((unidade) => (
-                  <option key={unidade.id} value={unidade.id}>
-                    {unidade.sigla}
-                  </option>
-                ))}
+              <input type="text" id="name" value={nome} onChange={event => setNome(event.target.value)} placeholder="Nome" />
+              <input type="text" id="price" value={preco} onChange={(event: { target: { value: any; }; }) => setPreco(event.target.value)} placeholder="Preço" />
+              <select name="unities" id="unity" value={unidade} onChange={event => setUnidade(event.target.value)}>
+                <option value="">Und Medida</option>
+                <option value="KG">KG</option>
+                <option value="PCT">PCT</option>
+                <option value="UND">UND</option>
+                <option value="LT">LT</option>
+                <option value="L">L</option>
+                <option value="MÇ">MÇ</option>
+                <option value="BDJ">BDJ</option>
+                <option value="CX">CX</option>
+                <option value="PLT">PLT</option>
+                <option value="DZ">DZ</option>
               </select>
-              {unidadesMedida.length === 0 && (
-                <span style={{ fontSize: '12px', color: '#666' }}>
-                  Carregando unidades de medida...
-                </span>
-              )}
             </div>
-            <FormSubmitButton type="submit" isUpdate={isUpdate} disabled={!isValid}>
-              Cadastrar
-            </FormSubmitButton>
-            <FormButton type="button" isUpdate={isUpdate} onClick={() => handleUpdate()}>
-              Atualizar
-            </FormButton>
+            <FormSubmitButton type="submit" isUpdate={isUpdate} disabled={!isValid}>Cadastrar</FormSubmitButton>
+            <FormButton type="button" isUpdate={isUpdate} onClick={() => handleUpdate()}>Atualizar</FormButton>
           </FormItself>
         </Content>
         <InputFilter>
-          <input 
-            type="text" 
-            placeholder="Filtre pelo nome do produto" 
-            onChange={event => handleFilterProdutoList(event.target.value)} 
-          />
+          <input type="text" placeholder="Filtre pelo nome do produto" onChange={event => handleFilterProdutoList(event.target.value)} />
         </InputFilter>
         <TableContainer>
-          {isError && (
-            <div>
-              <Loading color="success" size="lg">
-                Erro ao carregar os Produtos.
-              </Loading>
-            </div>
-          )}
-          {isLoading && (
-            <div>
-              <Loading color="success" size="lg">
-                Carregando Produtos
-              </Loading>
-            </div>
-          )}
+          {isError && <div><Loading color="success" size="lg">Erro ao carregar os Produtos.</Loading></div>}
+          {isLoading && <div><Loading color="success" size="lg">Carregando Produtos</Loading></div>}
           {isSuccess && (
             <table id="products-table">
               <thead>
@@ -245,114 +178,56 @@ const CadastroProduto: NextPage = () => {
 
               <tbody>
                 {filter.length > 1 ? (
-                  filteredprodutos.map(produto => (
-                    <tr key={produto.id}>
-                      <td>{produto.nome}</td>
-                      <td>
-                        {new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL'
-                        }).format(Number(produto.preco))}
-                      </td>
-                      <td>{produto.unidade}</td>
-                      <td>{produto.ativo === 1 ? 'ATIVO' : 'DESATIV.'}</td>
-                      <td>
-                        <a>
-                          <Image 
-                            onClick={() => handleUpdateProductStatus(produto)} 
-                            src={ConfirmImg} 
-                            alt="Atualizar status do produto" 
-                            width={30} 
-                            height={30} 
-                          />
-                        </a>
-                        <a>
-                          <Image 
-                            onClick={() => prepareUpdate(produto)} 
-                            src={EditImg} 
-                            alt="Visualizar" 
-                            width={30} 
-                            height={30} 
-                          />
-                        </a>
-                        <a>
-                          <Image 
-                            onClick={() => handleDeleteProduto(produto)} 
-                            src={DeleteImg} 
-                            alt="Confirmar" 
-                            width={30} 
-                            height={30} 
-                          />
-                        </a>
-                      </td>
-                    </tr>
-                  ))
+                  filteredprodutos.map(produto => {
+                    return (
+                      <tr key={produto.id}>
+                        <td>{produto.nome}</td>
+                        <td>
+                        { new Intl.NumberFormat('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL'
+                          }).format(Number(produto.preco))}
+                        </td>
+                        <td>{produto.unidade}</td>
+                        <td>{produto.ativo === 1 ? 'ATIVO' : 'DESATIV.'}</td>
+                        <td>
+                          <a><Image onClick={() => {handleUpdateProductStatus(produto)}} src={ConfirmImg} alt="Atualizar status do produto" width={30} height={30} /></a>
+                          <a><Image onClick={() => prepareUpdate(produto)} src={EditImg} alt="Visualizar" width={30} height={30} /></a>
+                          <a><Image onClick={() => handleDeleteProduto(produto)} src={DeleteImg} alt="Confirmar" width={30} height={30} /></a>
+                        </td>
+                      </tr>
+                    )
+                  })
                 ) : (
-                  produtosPaginados.map((produto: ProdutoProps) => (
-                    <tr key={produto.id}>
-                      <td>{produto.nome}</td>
-                      <td>
-                        {new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL'
-                        }).format(Number(produto.preco))}
-                      </td>
-                      <td>{produto.unidade}</td>
-                      <td>{produto.ativo === 1 ? 'ATIVO' : 'DESATIV.'}</td>
-                      <td>
-                        <a>
-                          <Image 
-                            onClick={() => handleUpdateProductStatus(produto)} 
-                            src={ConfirmImg} 
-                            alt="Atualizar status do produto" 
-                            width={30} 
-                            height={30} 
-                          />
-                        </a>
-                        <a>
-                          <Image 
-                            onClick={() => prepareUpdate(produto)} 
-                            src={EditImg} 
-                            alt="Visualizar" 
-                            width={30} 
-                            height={30} 
-                          />
-                        </a>
-                        <a>
-                          <Image 
-                            onClick={() => handleDeleteProduto(produto)} 
-                            src={DeleteImg} 
-                            alt="Confirmar" 
-                            width={30} 
-                            height={30} 
-                          />
-                        </a>
-                      </td>
-                    </tr>
-                  ))
+                  produtosPaginados.map((produto: ProdutoProps) => {
+                    return (
+                      <tr key={produto.id}>
+                        <td>{produto.nome}</td>
+                        <td>
+                        { new Intl.NumberFormat('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL'
+                          }).format(Number(produto.preco))}
+                        </td>
+                        <td>{produto.unidade}</td>
+                        <td>{produto.ativo === 1 ? 'ATIVO' : 'DESATIV.'}</td>
+                        <td>
+                          <a><Image onClick={() => {handleUpdateProductStatus(produto)}} src={ConfirmImg} alt="Atualizar status do produto" width={30} height={30} /></a>
+                          <a><Image onClick={() => prepareUpdate(produto)} src={EditImg} alt="Visualizar" width={30} height={30} /></a>
+                          <a><Image onClick={() => handleDeleteProduto(produto)} src={DeleteImg} alt="Confirmar" width={30} height={30} /></a>
+                        </td>
+                      </tr>
+                    )
+                  })
                 )}
+                
               </tbody>
             </table>
           )}
         </TableContainer>
-        {produtosPaginados && (
-          <Pagination 
-            totalPosts={produtos.length} 
-            postsPerPage={postPerPage} 
-            setCurrentPage={setCurrentPage} 
-          />
-        )}
-        <DeleteModal 
-          isOpen={isDeleteModalOpen} 
-          onRequestClose={onRequestClose} 
-          entity='Produto' 
-          id={id} 
-        />
-        <UpdateProductStatus 
-          isOpen={isUpdateStatusModalOpen} 
-          onRequestClose={onRequestClose} 
-          produto={produto as ProdutoProps} 
-        />
+        {produtosPaginados && <Pagination totalPosts={produtos.length} postsPerPage={postPerPage} setCurrentPage={setCurrentPage} />}
+        <DeleteModal isOpen={isDeleteModalOpen} onRequestClose={onRequestClose} entity='Produto' id={id} />
+        <UpdateProductStatus isOpen={isUpdateStatusModalOpen} onRequestClose={onRequestClose} produto={produto as ProdutoProps} />
       </Container>
     </>
   )

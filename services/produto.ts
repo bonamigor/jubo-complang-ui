@@ -39,11 +39,11 @@ const ProdutoService = (httpClient: AxiosInstance) => ({
       return response.data
   },
 
-  cadastrarProduto: async ({ nome, precoCusto, unidadeMedidaId }: 
-    { nome: string, precoCusto: string, unidadeMedidaId: number }) => {
+  cadastrarProduto: async ({ nome, precoCusto, unidadeMedida }: 
+    { nome: string, precoCusto: string, unidadeMedida: string }) => {
     const response = await httpClient.post(
       '/api/produtos',
-      { nome, precoCusto, unidadeMedidaId }
+      { nome, precoCusto, unidadeMedida }
     )
 
     let errors = null
@@ -61,11 +61,11 @@ const ProdutoService = (httpClient: AxiosInstance) => ({
     }
   },
 
-  atualizarProduto: async ({ nome, precoCusto, unidadeMedidaId, id }: 
-    { nome: string, precoCusto: string, unidadeMedidaId: number, id: number }) => {
+  atualizarProduto: async ({ nome, precoCusto, unidadeMedida, id }: 
+    { nome: string, precoCusto: string, unidadeMedida: string, id: number }) => {
     const response = await httpClient.put(
       '/api/produtos',
-      { nome, precoCusto, unidadeMedidaId, id }
+      { nome, precoCusto, unidadeMedida, id }
     )
 
     let errors = null

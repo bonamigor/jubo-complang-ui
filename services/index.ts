@@ -8,7 +8,6 @@ import PedidoService from './pedido'
 import ProdutoService from "./produto"
 import ProdutoEstanteService from "./produtoEstante"
 import UsuarioService from './usuario'
-import UnidadeMedidaService from "./unidade-medida"
 
 const API_ENVS = {
   local: 'http://localhost:3001',
@@ -39,4 +38,3 @@ export const estanteService = EstanteService(httpClient)
 export const produtoEstanteService = ProdutoEstanteService(httpClient)
 export const pedidoService = PedidoService(httpClient)
 export const itemPedidoService = ItemPedidoService(httpClient)
-export const unidadeMedidaService = UnidadeMedidaService(httpClient)
