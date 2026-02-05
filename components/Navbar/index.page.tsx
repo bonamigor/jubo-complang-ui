@@ -34,7 +34,7 @@ const Navbar: NextPage<NavbarProps> = ({ isUserLoggedIn }) => {
         <Content>
           <Logo>
             <Image src={logoImg} alt="Jubo" width={50} height={40}/>
-            <h1>Jubo</h1>
+            <h1>COOP Pedidos</h1>
           </Logo>
           {isAdmin ? (
             <Menu>

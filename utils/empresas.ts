@@ -11,7 +11,7 @@ export interface EmpresaProps {
 
 export const empresas: Array<EmpresaProps> = [
   {
-    id: 9,
+    id: 1,
     attribute: 'comercial-lima',
     displayName: 'Comercial Lima',
     nome: 'CL ALIMENTOS LTDA',
@@ -21,7 +21,7 @@ export const empresas: Array<EmpresaProps> = [
     estado: 'Goiás'
   },
   {
-    id: 10,
+    id: 2,
     attribute: 'cooperago',
     displayName: 'COOPERAGO',
     nome: 'COOPERATIVA MISTA DOS AGRICULTORES FAMILIARES E ASSENTADOS DE ARAGOIANIA E REGIOES',
@@ -31,7 +31,7 @@ export const empresas: Array<EmpresaProps> = [
     estado: 'Goiás'
   },
   {
-    id: 11,
+    id: 3,
     attribute: 'complang',
     displayName: 'COMPLANG',
     nome: 'COOPERATIVA MISTA DOS AGRICULTORES FAMILIARES PLANTIO DE GOIAS',
@@ -41,7 +41,7 @@ export const empresas: Array<EmpresaProps> = [
     estado: 'Goiás'
   },
   {
-    id: 12,
+    id: 4,
     attribute: 'cooper-br',
     displayName: 'COOPER-BR',
     nome: 'COOPERATIVA MISTA DOS AGRICULTORES FAMILIARES BRASILEIROS',
@@ -49,5 +49,25 @@ export const empresas: Array<EmpresaProps> = [
     endereco: 'AV CARLOS DE PINA, S/N, QUADRA 17 LOTE 02, SETOR CENTRAL, 75.165-000',
     cidade: 'Ouro Verde de Goiás',
     estado: 'Goiás'
-  }
+  },
+  {
+    id: 5,
+    attribute: 'coopassen',
+    displayName: 'COOPASSEN',
+    nome: 'COOPASSEN',
+    cnpj: '36.070.538/0001-10',
+    endereco: 'R. Padre Alcides Spolidoro, S/N, Q. I4 L. 11/12, Dist Ind Santa Edwiges',
+    cidade: 'Senador Canedo',
+    estado: 'Goiás'
+  },
+  {
+    id: 6,
+    attribute: 'compaf',
+    displayName: 'COMPAF',
+    nome: 'COMPAF',
+    cnpj: '29.119.413/0001-71',
+    endereco: 'ROD GO-320 KM 10.5 n 100, LT. 11 QD. 03, RES BOA ESPERANCA',
+    cidade: 'Goiatuba',
+    estado: 'Goiás'
+  },
 ]
